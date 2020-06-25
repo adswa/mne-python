@@ -3187,3 +3187,44 @@ def _get_3d_option(key):
     opt = opt.lower()
     _check_option(f'3D option {key}', opt, ('true', 'false'))
     return opt == 'true'
+
+
+class _BrainScraper(object):
+    """Scrape Brain objects."""
+
+    def __repr__(self):
+        return '<BrainScraper>'
+
+    def __call__(self, block, block_vars, gallery_conf):
+        from ._brain import _Brain
+        rst = ''
+        for brain in block_vars['example_globals'].values():
+            if isinstance(brain, _Brain):
+                # Only need to process if it's a brain with a time_viewer
+                # with traces on and shown in the same window, otherwise
+                # PyVista and matplotlib scrapers can just do the work
+                if getattr(brain, 'time_viewer', None) is None:
+                    continue
+                time_viewer = brain.time_viewer
+                if not time_viewer.show_traces or time_viewer.separate_canvas:
+                    continue
+                from sphinx_gallery.scrapers import figure_rst
+                from matplotlib.image import imsave
+                img_fname = next(block_vars['image_path_iterator'])
+                brain_img = brain.screenshot()
+                canvas = time_viewer.mpl_canvas.fig.canvas
+                trace_img = np.frombuffer(
+                    canvas.tostring_rgb(), dtype=np.uint8)
+                trace_img.shape = canvas.get_width_height()[::-1] + (3,)
+                # need to slice into trace_img because in general it's a bit
+                # smaller
+                delta = trace_img.shape[1] - brain_img.shape[1]
+                if delta > 0:
+                    start = delta // 2
+                    trace_img = trace_img[:, start:start + brain_img.shape[1]]
+                img = np.concatenate([brain_img, trace_img], axis=0)
+                imsave(img_fname, img)
+                rst += figure_rst(
+                    [img_fname], gallery_conf['src_dir'], brain._title)
+                brain.close()
+        return rst

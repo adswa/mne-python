@@ -374,6 +374,11 @@ if any(x in scrapers for x in ('pyvista', 'mayavi')):
     scrapers += (report_scraper,)
 else:
     report_scraper = None
+if 'pyvista' in scrapers:
+    brain_scraper = mne.viz._3d._BrainScraper()
+    scrapers = list(scrapers)
+    scrapers.insert(scrapers.index('pyvista'), brain_scraper)
+    scrapers = tuple(scrapers)
 
 
 def append_attr_meth_examples(app, what, name, obj, options, lines):
@@ -451,6 +456,8 @@ def reset_warnings(gallery_conf, fname):
         'ignore', '.*semaphore_tracker: process died unexpectedly.*')
     warnings.filterwarnings(  # needed until SciPy 1.2.0 is released
         'ignore', '.*will be interpreted as an array index.*', module='scipy')
+    warnings.filterwarnings(
+        'ignore', 'VTK 9 no longer accepts an offset array', UserWarning)
     for key in ('HasTraits', r'numpy\.testing', 'importlib', r'np\.loads',
                 'Using or importing the ABCs from',  # internal modules on 3.7
                 r"it will be an error for 'np\.bool_'",  # ndimage
@@ -461,6 +468,7 @@ def reset_warnings(gallery_conf, fname):
                 'scipy.* is deprecated and will be removed in',  # dipy
                 r'Converting `np\.character` to a dtype is deprecated',  # vtk
                 r'sphinx\.util\.smartypants is deprecated',
+                'is a deprecated alias',
                 ):
         warnings.filterwarnings(  # deal with other modules having bad imports
             'ignore', message=".*%s.*" % key, category=DeprecationWarning)
