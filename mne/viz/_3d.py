@@ -3196,8 +3196,11 @@ class _BrainScraper(object):
         return '<BrainScraper>'
 
     def __call__(self, block, block_vars, gallery_conf):
-        from ._brain import _Brain
         rst = ''
+        try:
+            from ._brain import _Brain
+        except ImportError:  # in case we haven't fired up the 3D plotting yet
+            return rst
         for brain in block_vars['example_globals'].values():
             if isinstance(brain, _Brain):
                 # Only need to process if it's a brain with a time_viewer
