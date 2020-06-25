@@ -17,6 +17,7 @@ from numpy.testing import assert_allclose
 from mne import SourceEstimate, read_source_estimate
 from mne.source_space import read_source_spaces, vertex_to_mni
 from mne.datasets import testing
+from mne.utils import has_version
 from mne.viz._brain import _Brain, _TimeViewer, _LinkViewer
 from mne.viz._brain.colormap import calculate_lut
 from mne.viz._3d import _BrainScraper
@@ -240,6 +241,8 @@ def test_brain_timeviewer_traces(renderer_interactive, hemi, tmpdir):
     assert len(spheres) == len(hemi_str)
 
     # and the scraper for it (will close the instance)
+    if not has_version('sphinx_gallery'):
+        return
     screenshot = brain_data.screenshot()
     fnames = [str(tmpdir.join('temp.png'))]
     block_vars = dict(image_path_iterator=iter(fnames),

@@ -230,7 +230,7 @@ jobs:
       python -m pip install --upgrade --only-binary vtk vtk;
       python -m pip install https://github.com/enthought/mayavi/zipball/master
       python -m pip install -r requirements.txt
-      python -m pip install codecov
+      python -m pip install codecov sphinx-gallery
     condition: eq(variables['TEST_MODE'], 'pre-pip')
     displayName: 'Install dependencies with pip --pre'
   - powershell: |
@@ -245,7 +245,7 @@ jobs:
       conda install numpy scipy matplotlib scikit-learn
       conda env update --file $env:CONDA_ENV
       pip uninstall -yq mne
-      pip install codecov
+      pip install codecov sphinx-gallery
       pip uninstall -yq pysurfer mayavi
       Write-Host ("##vso[task.setvariable variable=PATH]" + $env:PATH)
     condition: eq(variables['TEST_MODE'], 'conda')
