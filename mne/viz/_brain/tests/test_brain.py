@@ -17,7 +17,7 @@ from numpy.testing import assert_allclose
 from mne import SourceEstimate, read_source_estimate
 from mne.source_space import read_source_spaces, vertex_to_mni
 from mne.datasets import testing
-from mne.utils import has_version
+from mne.utils import check_version
 from mne.viz._brain import _Brain, _TimeViewer, _LinkViewer
 from mne.viz._brain.colormap import calculate_lut
 from mne.viz._3d import _BrainScraper
@@ -190,7 +190,7 @@ def test_brain_timeviewer(renderer_interactive):
 def test_brain_timeviewer_traces(renderer_interactive, hemi, tmpdir):
     """Test _TimeViewer traces."""
     if renderer_interactive._get_3d_backend() != 'pyvista':
-        pytest.skip()
+        pytest.skip('Only PyVista supports traces')
     brain_data = _create_testing_brain(hemi=hemi)
     time_viewer = _TimeViewer(brain_data, show_traces=True)
     assert hasattr(time_viewer, "picked_points")
@@ -241,7 +241,7 @@ def test_brain_timeviewer_traces(renderer_interactive, hemi, tmpdir):
     assert len(spheres) == len(hemi_str)
 
     # and the scraper for it (will close the instance)
-    if not has_version('sphinx_gallery'):
+    if not check_version('sphinx_gallery'):
         return
     screenshot = brain_data.screenshot()
     fnames = [str(tmpdir.join('temp.png'))]
