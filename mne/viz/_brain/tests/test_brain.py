@@ -247,7 +247,7 @@ def test_brain_timeviewer_traces(renderer_interactive, hemi, tmpdir):
     gallery_conf = dict(src_dir=str(tmpdir))
     scraper = _BrainScraper()
     rst = scraper(None, block_vars, gallery_conf)
-    assert rst is not None
+    assert 'temp.png' in rst
     assert path.isfile(fnames[0])
     img = image.imread(fnames[0])
     assert img.shape[1] == screenshot.shape[1]  # same width
