@@ -3211,11 +3211,6 @@ class _BrainScraper(object):
             from matplotlib.image import imsave
             img_fname = next(block_vars['image_path_iterator'])
             img = brain.screenshot()
-            if getattr(brain, 'time_viewer', None) is None:
-                continue
-            time_viewer = brain.time_viewer
-            if not time_viewer.show_traces or time_viewer.separate_canvas:
-                continue
             if getattr(brain, 'time_viewer', None) is not None and \
                     brain.time_viewer.show_traces and \
                     not brain.time_viewer.separate_canvas:
