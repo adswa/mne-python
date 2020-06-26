@@ -3205,12 +3205,13 @@ class _BrainScraper(object):
             # Only need to process if it's a brain with a time_viewer
             # with traces on and shown in the same window, otherwise
             # PyVista and matplotlib scrapers can just do the work
-            if not isinstance(brain, _Brain):
+            if (not isinstance(brain, _Brain)) or brain._closed:
                 continue
             from sphinx_gallery.scrapers import figure_rst
             from matplotlib.image import imsave
             img_fname = next(block_vars['image_path_iterator'])
             img = brain.screenshot()
+            assert img.size > 0
             if getattr(brain, 'time_viewer', None) is not None and \
                     brain.time_viewer.show_traces and \
                     not brain.time_viewer.separate_canvas:
@@ -3242,6 +3243,7 @@ class _BrainScraper(object):
                     trace_img = trace_img[:, start:start + img.shape[1]]
                 img = np.concatenate([img, trace_img], axis=0)
             imsave(img_fname, img)
+            assert op.isfile(img_fname)
             rst += figure_rst(
                 [img_fname], gallery_conf['src_dir'], brain._title)
             brain.close()
