@@ -3236,7 +3236,8 @@ class _BrainScraper(object):
                 # before calling tobytes():
                 trace_img = np.asarray(
                     canvas.renderer._renderer).take([0, 1, 2], axis=2)
-                # need to slice into trace_img because generally it's a bit smaller
+                # need to slice into trace_img because generally it's a bit
+                # smaller
                 delta = trace_img.shape[1] - img.shape[1]
                 if delta > 0:
                     start = delta // 2
