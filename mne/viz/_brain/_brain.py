@@ -246,17 +246,26 @@ class _Brain(object):
                 if not (hemi in ['lh', 'rh'] and h != hemi):
                     ci = hi if hemi == 'split' else 0
                     self._renderer.subplot(ri, ci)
+                    if h not in self._hemi_meshes:
+                        mesh_kwargs = dict(
+                            x=self.geo[h].coords[:, 0],
+                            y=self.geo[h].coords[:, 1],
+                            z=self.geo[h].coords[:, 2],
+                            triangles=self.geo[h].faces,
+                            normals=self.geo[h].nn,
+                        )
+                    else:
+                        mesh_kwargs = dict(
+                            x=None, y=None, z=None, triangles=None,
+                            mesh=self._hemi_meshes[h])
                     mesh_data = self._renderer.mesh(
-                        x=self.geo[h].coords[:, 0],
-                        y=self.geo[h].coords[:, 1],
-                        z=self.geo[h].coords[:, 2],
-                        triangles=self.geo[h].faces,
                         color=None,
                         scalars=self.geo[h].bin_curv,
                         vmin=geo_kwargs["vmin"],
                         vmax=geo_kwargs["vmax"],
                         colormap=geo_kwargs["colormap"],
                         opacity=alpha,
+                        **mesh_kwargs,
                     )
                     if isinstance(mesh_data, tuple):
                         actor, mesh = mesh_data

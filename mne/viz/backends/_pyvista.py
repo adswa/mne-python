@@ -221,14 +221,20 @@ class _Renderer(_BaseRenderer):
     def mesh(self, x, y, z, triangles, color, opacity=1.0, shading=False,
              backface_culling=False, scalars=None, colormap=None,
              vmin=None, vmax=None, interpolate_before_map=True,
-             representation='surface', line_width=1., **kwargs):
+             representation='surface', line_width=1., mesh=None,
+             normals=None, **kwargs):
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=FutureWarning)
-            smooth_shading = self.figure.smooth_shading
-            vertices = np.c_[x, y, z]
-            n_vertices = len(vertices)
-            triangles = np.c_[np.full(len(triangles), 3), triangles]
-            mesh = PolyData(vertices, triangles)
+            if mesh is None:
+                vertices = np.c_[x, y, z]
+                n_vertices = len(vertices)
+                triangles = np.c_[np.full(len(triangles), 3), triangles]
+                mesh = PolyData(vertices, triangles)
+                if normals is not None:
+                    assert normals.shape == (n_vertices, 3)
+                    mesh.GetCellData().SetNormals(None)
+                    from vtk.util.numpy_support import numpy_to_vtk
+                    mesh.GetPointData().SetNormals(numpy_to_vtk(normals))
             rgba = False
             if color is not None and len(color) == n_vertices:
                 if color.shape[1] == 3:
@@ -237,10 +243,6 @@ class _Renderer(_BaseRenderer):
                     scalars = color
                 scalars = (scalars * 255).astype('ubyte')
                 color = None
-                # Disabling normal computation for smooth shading
-                # is a temporary workaround of:
-                # https://github.com/pyvista/pyvista-support/issues/15
-                smooth_shading = False
                 rgba = True
             if isinstance(colormap, np.ndarray):
                 if colormap.dtype == np.uint8:
@@ -254,7 +256,7 @@ class _Renderer(_BaseRenderer):
                 rgba=rgba, opacity=opacity, cmap=colormap,
                 backface_culling=backface_culling,
                 rng=[vmin, vmax], show_scalar_bar=False,
-                smooth_shading=smooth_shading,
+                smooth_shading=False,
                 interpolate_before_map=interpolate_before_map,
                 representation=representation, line_width=line_width, **kwargs,
             )
