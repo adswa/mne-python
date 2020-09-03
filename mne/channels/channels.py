@@ -887,12 +887,12 @@ class UpdateChannelsMixin(object):
 
         if not isinstance(self, BaseRaw):
             _check_preload(self, 'adding, dropping, or reordering channels')
+        else:
+            raise RuntimeError
+            self._read_picks = [r[np.sort(idx)] for r in self._read_picks]
 
         if getattr(self, 'picks', None) is not None:
             self.picks = self.picks[idx]
-
-        if getattr(self, '_read_picks', None) is not None:
-            self._read_picks = [r[idx] for r in self._read_picks]
 
         if hasattr(self, '_cals'):
             self._cals = self._cals[idx]

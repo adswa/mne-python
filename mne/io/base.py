@@ -237,7 +237,6 @@ class BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin, SetChannelsMixin,
             # unit
             orig_units = _check_orig_units(orig_units)
         self._orig_units = orig_units
-        self._projectors = list()
         self._projector = None
         self._dtype_ = dtype
         self.set_annotations(None)
@@ -391,6 +390,7 @@ class BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin, SetChannelsMixin,
             this_sl = slice(offset, offset + n_read)
             # reindex back to original file
             orig_idx = _convert_slice(self._read_picks[fi][idx])
+            print(orig_idx)
             _ReadSegmentFileProtector(self)._read_segment_file(
                 data[:, this_sl], orig_idx, fi,
                 int(start_file), int(stop_file), cals, mult)
@@ -1564,7 +1564,7 @@ class BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin, SetChannelsMixin,
             nsamp = c_ns[-1]
 
             if not self.preload:
-                this_data = self._read_segment()
+                this_data = self._read_segment(projector=self._projector)
             else:
                 this_data = self._data
 
@@ -1576,7 +1576,8 @@ class BaseRaw(ProjMixin, ContainsMixin, UpdateChannelsMixin, SetChannelsMixin,
                 if not raws[ri].preload:
                     # read the data directly into the buffer
                     data_buffer = _data[:, c_ns[ri]:c_ns[ri + 1]]
-                    raws[ri]._read_segment(data_buffer=data_buffer)
+                    raws[ri]._read_segment(data_buffer=data_buffer,
+                                           projector=self._projector)
                 else:
                     _data[:, c_ns[ri]:c_ns[ri + 1]] = raws[ri]._data
             self._data = _data
