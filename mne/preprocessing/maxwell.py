@@ -117,7 +117,8 @@ def maxwell_filter(raw, origin='auto', int_order=8, ext_order=3,
 
     Some of this code was adapted and relicensed (with BSD form) with
     permission from Jussi Nurminen. These algorithms are based on work
-    from [1]_ and [2]_. It will likely use multiple CPU cores, see the
+    from :footcite:`TauluKajola2005` and :footcite:`TauluSimola2006`.
+    It will likely use multiple CPU cores, see the
     :ref:`FAQ <faq_cpu>` for more information.
 
     .. warning:: Maxwell filtering in MNE is not designed or certified
@@ -200,15 +201,7 @@ def maxwell_filter(raw, origin='auto', int_order=8, ext_order=3,
 
     References
     ----------
-    .. [1] Taulu S. and Kajola M. "Presentation of electromagnetic
-           multichannel data: The signal space separation method,"
-           Journal of Applied Physics, vol. 97, pp. 124905 1-10, 2005.
-           https://doi.org/10.1063/1.1935742
-
-    .. [2] Taulu S. and Simola J. "Spatiotemporal signal space separation
-           method for rejecting nearby interference in MEG measurements,"
-           Physics in Medicine and Biology, vol. 51, pp. 1759-1768, 2006.
-           https://doi.org/10.1088/0031-9155/51/7/008
+    .. footbibliography::
     """  # noqa: E501
     logger.info('Maxwell filtering raw data')
     params = _prep_maxwell_filter(
@@ -2074,6 +2067,10 @@ def find_bad_channels_maxwell(
     implementations.
 
     .. versionadded:: 0.20
+
+    References
+    ----------
+    .. footbibliography::
     """
     if h_freq is not None:
         if raw.info.get('lowpass') and raw.info['lowpass'] < h_freq:

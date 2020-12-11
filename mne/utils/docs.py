@@ -857,7 +857,7 @@ skip_by_annotation : str | list of str
 docdict['maxwell_extended'] = """
 extended_proj : list
     The empty-room projection vectors used to extend the external
-    SSS basis (i.e., use eSSS).
+    SSS basis (i.e., use eSSS) :footcite:`HelleEtAl2020`.
 
     .. versionadded:: 0.21
 """
